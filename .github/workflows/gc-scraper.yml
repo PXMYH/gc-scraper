@@ -16,8 +16,8 @@ jobs:
 
       - name: Install curl and pup
         run: |
-          sudo brew install -y curl
-          sudo brew install -y pup
+          brew install -y curl
+          brew install -y pup
 
       - name: Fetch HTML Content
         run: curl -o perm.html https://flag.dol.gov/processingtimes > gc.html
