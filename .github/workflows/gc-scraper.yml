@@ -8,7 +8,7 @@ on:
 
 jobs:
   scheduled:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checkout Repository
@@ -16,9 +16,8 @@ jobs:
 
       - name: Install curl and pup
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y curl
-          sudo apt-get install -y pup
+          sudo brew install -y curl
+          sudo brew install -y pup
 
       - name: Fetch HTML Content
         run: curl -o perm.html https://flag.dol.gov/processingtimes > gc.html
