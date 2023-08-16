@@ -20,11 +20,11 @@ jobs:
           brew install pup
 
       - name: Fetch HTML Content
-        run: curl -o perm.html https://flag.dol.gov/processingtimes > gc.html
+        run: curl -o gc.html https://flag.dol.gov/processingtimes
 
       - name: Extract Elements Using pup
         run: |-
-          pup '#block-flag-content > article > div > div > table:nth-child(3) > tbody > tr:nth-child(1) text{}' < perm.html | grep -v '^$' | grep -v '^[[:space:]]*$' > gc_time.txt
+          pup '#block-flag-content > article > div > div > table:nth-child(3) > tbody > tr:nth-child(1) text{}' < gc.html | grep -v '^$' | grep -v '^[[:space:]]*$' > gc_time.txt
 
       - name: Commit and push if it changed
         run: |-
