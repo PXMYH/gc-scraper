@@ -25,44 +25,111 @@
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     <meta charset="utf-8" />
-<meta name="Generator" content="Drupal 9 (https://www.drupal.org)" />
+<meta name="Generator" content="Drupal 10 (https://www.drupal.org)" />
 <meta name="MobileOptimized" content="width" />
 <meta name="HandheldFriendly" content="true" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script type="text/javascript" data-toolbar-anti-flicker-loading>(function() {
+  const toolbarState = sessionStorage.getItem('Drupal.toolbar.toolbarState')
+    ? JSON.parse(sessionStorage.getItem('Drupal.toolbar.toolbarState'))
+    : false;
+  // These are classes that toolbar typically adds to <body>, but this code
+  // executes before the first paint, when <body> is not yet present. The
+  // classes are added to <html> so styling immediately reflects the current
+  // toolbar state. The classes are removed after the toolbar completes
+  // initialization.
+  const classesToAdd = ['toolbar-loading', 'toolbar-anti-flicker'];
+  if (toolbarState) {
+    const {
+      orientation,
+      hasActiveTab,
+      isFixed,
+      activeTray,
+      activeTabId,
+      isOriented,
+      userButtonMinWidth
+    } = toolbarState;
+
+    classesToAdd.push(
+      orientation ? `toolbar-` + orientation + `` : 'toolbar-horizontal',
+    );
+    if (hasActiveTab !== false) {
+      classesToAdd.push('toolbar-tray-open');
+    }
+    if (isFixed) {
+      classesToAdd.push('toolbar-fixed');
+    }
+    if (isOriented) {
+      classesToAdd.push('toolbar-oriented');
+    }
+
+    if (activeTray) {
+      // These styles are added so the active tab/tray styles are present
+      // immediately instead of "flickering" on as the toolbar initializes. In
+      // instances where a tray is lazy loaded, these styles facilitate the
+      // lazy loaded tray appearing gracefully and without reflow.
+      const styleContent = `
+      .toolbar-loading #` + activeTabId + ` {
+        background-image: linear-gradient(rgba(255, 255, 255, 0.25) 20%, transparent 200%);
+      }
+      .toolbar-loading #` + activeTabId + `-tray {
+        display: block; box-shadow: -1px 0 5px 2px rgb(0 0 0 / 33%);
+        border-right: 1px solid #aaa; background-color: #f5f5f5;
+        z-index: 0;
+      }
+      .toolbar-loading.toolbar-vertical.toolbar-tray-open #` + activeTabId + `-tray {
+        width: 15rem; height: 100vh;
+      }
+     .toolbar-loading.toolbar-horizontal :not(#` + activeTray + `) > .toolbar-lining {opacity: 0}`;
+
+      const style = document.createElement('style');
+      style.textContent = styleContent;
+      style.setAttribute('data-toolbar-anti-flicker-loading', true);
+      document.querySelector('head').appendChild(style);
+
+      if (userButtonMinWidth) {
+        const userButtonStyle = document.createElement('style');
+        userButtonStyle.textContent = `#toolbar-item-user {min-width: ` + userButtonMinWidth +`px;}`
+        document.querySelector('head').appendChild(userButtonStyle);
+      }
+    }
+  }
+  document.querySelector('html').classList.add(...classesToAdd);
+})();</script>
 <link rel="icon" href="/themes/custom/flag/favicon.ico" type="image/vnd.microsoft.icon" />
 <link rel="canonical" href="http://flag.dol.gov/processingtimes" />
 <link rel="shortlink" href="http://flag.dol.gov/node/11810" />
 
     <title>Processing Times | Flag.dol.gov</title>
-    <link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/ajax-progress.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/align.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/autocomplete-loading.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/fieldgroup.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/container-inline.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/clearfix.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/details.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/hidden.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/item-list.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/js.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/nowrap.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/position-container.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/progress.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/reset-appearance.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/resize.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/sticky-header.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/system-status-counter.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/system-status-report-counters.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/system-status-report-general-info.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/tabledrag.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/tablesort.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/system/components/tree-child.module.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/core/assets/vendor/normalize-css/normalize.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/stable/css/core/normalize-fixes.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/classy/css/components/messages.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/themes/contrib/uswds/css/style.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/core/themes/seven/css/components/dropbutton.component.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/themes/custom/flag/assets/css/flag.css?rzr5qh" />
-<link rel="stylesheet" media="all" href="/themes/custom/flag/assets/css/fontawesome.css?rzr5qh" />
+    <link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/ajax-progress.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/align.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/autocomplete-loading.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/fieldgroup.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/container-inline.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/clearfix.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/details.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/hidden.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/item-list.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/js.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/nowrap.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/position-container.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/progress.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/reset-appearance.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/resize.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/sticky-header.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/system-status-counter.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/system-status-report-counters.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/system-status-report-general-info.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/tabledrag.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/tablesort.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/system/components/tree-child.module.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/core/assets/vendor/normalize-css/normalize.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/stable/css/core/normalize-fixes.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/classy/css/components/messages.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/contrib/uswds/css/style.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/core/themes/seven/css/components/dropbutton.component.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/custom/flag/assets/css/flag.css?s0aaof" />
+<link rel="stylesheet" media="all" href="/themes/custom/flag/assets/css/fontawesome.css?s0aaof" />
 
     
   </head>
@@ -126,38 +193,6 @@
     </div>
   </div>
 </section>
-
-                                <div class="region region-header-top">
-        <div id="block-generalscheduledmaintenance" class="block block-block-content block-block-content89f02749-6ce6-40ed-b396-d5dbdfdd4907">
-  
-    
-      
-            <div class="clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item"><script>
-<!--//--><![CDATA[// ><!--
-
-    window.onload = function() {
-    var id = document.getElementById("bannerClose");
-    id.addEventListener("click",
-        function(){
-            this.parentElement.style.display = 'none';
-        });
-    }
-
-//--><!]]>
-</script><div style="margin-left:0;margin-right:0;background-color:#FFB000;padding:15px;color:black;">
-<div id="bannerClose" style="position:relative;cursor:pointer;float:right"><img alt="close" src="/themes/custom/flag/assets/img/close.svg" /></div>
-
-<div style="max-width:1280px;margin-right:auto;margin-left:auto;padding-left:15px;padding-right:15px;">
-<h2 data-stringify-type="quote" type="cite">Scheduled Maintenance</h2>
-
-<p data-stringify-type="quote" type="cite">On Thursday, August 31, 2023, between 7:00 PM and 11:00 PM Eastern Time, the U.S. Department of Labor will be conducting system maintenance on the Foreign Labor Application Gateway (FLAG) System. System users will not be able to access FLAG during this time. We apologize in advance for any inconvenience this may cause and thank you for your patience.</p>
-</div>
-</div>
-</div>
-      
-  </div>
-
-    </div>
 
                       </div>
         </div>
@@ -301,6 +336,12 @@
       </span>
       
     
+          <li>
+        
+                  <a href="/wage-data/wage-search">
+            <span>OFLC Wage Search</span>
+                        </a>
+              </li>
           <li>
         
                   <a href="/wage-data/adverse-effect-wage-rates">
@@ -467,7 +508,7 @@
                     <div data-drupal-messages-fallback class="hidden"></div><div id="block-flag-content" class="block block-system block-system-main-block">
   
     
-      <article data-history-node-id="11810" role="article" about="/processingtimes" typeof="schema:WebPage">
+      <article data-history-node-id="11810" about="/processingtimes" typeof="schema:WebPage">
 
   
       <span property="schema:name" content="Processing Times " class="rdf-meta hidden"></span>
@@ -1837,7 +1878,7 @@
 			</td>
 		</tr></tbody></table><p><sup><span style="font-size: 12.5px;">6</span></sup>Withdrawn and rejected applications are excluded from the total, which may cause these numbers to fluctuate.<br /><sup><span style="font-size: 12.5px;">7</span></sup>Total number of pending applications that either received a NOA and actively recruiting for U.S. workers <strong><u>or</u></strong> responding to a NOD.<br /><sup><span style="font-size: 12.5px;">8</span></sup>Indicates employer is requesting to hire a foreign worker who is not already performing work in the CNMI in CW-1 visa status.<br /><sup><span style="font-size: 12.5px;">9</span></sup>Indicates employer is requesting to extend the employment of a foreign worker in CW-1 visa status.</p>
 <style type="text/css">
-<!--/*--><![CDATA[/* ><!--*/
+/*<![CDATA[*/
 table th,
   table td {
     text-align: center;
@@ -1876,7 +1917,7 @@ table th,
     margin-top: 5px;
   }
 
-/*--><!]]>*/
+/*]]>*/
 </style><p> </p>
 </div>
       
@@ -2121,10 +2162,10 @@ table th,
 
     
     <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","scriptPath":null,"pathPrefix":"","currentPath":"node\/11810","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"user":{"uid":0,"permissionsHash":"8d43bd76179e7c0f48df58f8045659e6be7fa5fbfa524c856b6547efb21187df"}}</script>
-<script src="/core/assets/vendor/jquery/jquery.min.js?v=3.6.0"></script>
-<script src="/core/misc/drupalSettingsLoader.js?v=9.4.14"></script>
-<script src="/core/misc/drupal.js?v=9.4.14"></script>
-<script src="/core/misc/drupal.init.js?v=9.4.14"></script>
+<script src="/core/assets/vendor/jquery/jquery.min.js?v=3.7.0"></script>
+<script src="/core/misc/drupalSettingsLoader.js?v=10.1.2"></script>
+<script src="/core/misc/drupal.js?v=10.1.2"></script>
+<script src="/core/misc/drupal.init.js?v=10.1.2"></script>
 <script src="/themes/custom/flag/assets/js/flag.js?v=2.0.0"></script>
 <script src="/themes/custom/flag/assets/js/uswds.min.js?v=2.0.0"></script>
 
