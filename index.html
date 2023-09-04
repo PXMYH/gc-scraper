@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Workflow Time</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .workflow-time {
+            font-size: 18px;
+            color: #0366d6;
+        }
+    </style>
+</head>
+<body>
+    <h1>GitHub Workflow Time</h1>
+    <p class="workflow-time" id="time"></p>
+    <script>
+        // Function to fetch and display time from gc_time.txt
+        async function displayTime() {
+            try {
+                const response = await fetch('gc_time.txt');
+                const text = await response.text();
+                const lines = text.trim().split('\n');
+                if (lines.length >= 2) {
+                    const time = lines[1].trim();
+                    document.getElementById('time').textContent = time;
+                }
+            } catch (error) {
+                console.error('Error fetching and displaying time:', error);
+            }
+        }
+
+        // Call the function to display time
+        displayTime();
+    </script>
+</body>
+</html>
