@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "gc-scraper"
+version = "1.0.1"
+description = "Pull processing time for various steps in US Green Card process"
+authors = ["Michael Hu <pxmyhdev@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+requests = "^2.26.0"
+beautifulsoup4 = "^4.10.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
