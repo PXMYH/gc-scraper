@@ -1,6 +1,7 @@
+import os
+
 import requests
 from bs4 import BeautifulSoup
-import os
 
 # Create a directory to store the downloaded pages
 if not os.path.exists('visa_bulletin_pages'):
@@ -14,13 +15,21 @@ start_year = 2016
 current_year = 2023  # You can adjust this as needed
 
 # Define the months
-months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
+months = [
+    "january", "february", "march", "april", "may", "june", "july", "august",
+    "september", "october", "november", "december"
+]
 
-# Loop through the years
+# Loop through the years and months
 for year in range(start_year, current_year + 1):
-    for month in months:
+    for month_index, month in enumerate(months):
+        # Adjust the year if the month is November or later
+        dos_fiscal_year = year + 1 if month_index >= 9 else year
+        calendar_year = year
+
         # Form the URL for the specific visa bulletin page
-        url = base_url + f"{year}/visa-bulletin-for-{month}-{year}.html"
+        url = base_url + f"{dos_fiscal_year}/visa-bulletin-for-{month}-{calendar_year}.html"
+        print(f"The Download URL {url}")
 
         # Send an HTTP GET request to the URL
         response = requests.get(url)
@@ -31,9 +40,9 @@ for year in range(start_year, current_year + 1):
             soup = BeautifulSoup(response.text, "html.parser")
 
             # Save the page content to a file
-            filename = f"visa_bulletin_pages/{month}_{year}.html"
+            filename = f"visa_bulletin_pages/{month}_{calendar_year}.html"
             with open(filename, "w", encoding="utf-8") as file:
                 file.write(str(soup))
-            print(f"Downloaded: {month} {year}")
+            print(f"Downloaded: {month} {calendar_year}")
         else:
-            print(f"Failed to download: {month} {year}")
+            print(f"Failed to download: {month} {calendar_year}")
