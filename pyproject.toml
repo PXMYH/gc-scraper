@@ -10,6 +10,7 @@ readme = "README.md"
 python = ">=3.10.0,<3.11"
 requests = "^2.26.0"
 beautifulsoup4 = "^4.10.0"
+bs4 = "^0.0.1"
 
 [tool.pyright]
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md
