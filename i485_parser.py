@@ -3,6 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 from datetime import datetime
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 
 
 # Function to convert date from "01OCT13" to "YYMM" format
@@ -23,6 +25,34 @@ def calculate_time_difference_months(calendar_date_str, pd_date_str):
                          ) * 12 + calendar_date.month - pd_date.month
 
     return months_difference
+
+
+# Generate a plot from the data and save it as an image
+def generate_plot(data):
+    # Extract calendar dates and time differences from the data
+    calendar_dates = [item[0] for item in data]
+    time_differences = [item[2] for item in data]
+
+    # Create a Matplotlib figure
+    plt.figure(figsize=(10, 6))
+    plt.plot(calendar_dates, time_differences, marker='o', linestyle='-')
+
+    # Customize the plot
+    plt.title("Time Gap vs Calendar Date")
+    plt.xlabel("Calendar Date")
+    plt.ylabel("Time Gap (months)")
+
+    # Format the x-axis labels to display every nth label (adjust n as needed)
+    n = 3  # Display every 3rd label
+    plt.xticks(range(0, len(calendar_dates), n),
+               calendar_dates[::n],
+               rotation=45)
+
+    plt.grid(True)
+
+    # Save the plot as an image
+    plt.savefig("visa_bulletin_plot.png", bbox_inches='tight')
+    plt.close()  # Close the figure to free up resources
 
 
 # Create a directory to store the downloaded pages
@@ -103,3 +133,7 @@ with open(csv_filename, 'w', newline='') as csv_file:
     csv_writer.writerows(data)
 
 print(f"Data written to {csv_filename}")
+
+# Generate the plot and save it as an image
+generate_plot(data)
+print("Plot generated and saved as visa_bulletin_plot.png")
