@@ -54,7 +54,7 @@ jobs:
         run: poetry install --no-interaction
 
       - name: Run i485 parser
-        run: python3 i485_parser.py
+        run: poetry run python3 i485_parser.py
 
       - name: Commit and push if it changed
         run: |-
