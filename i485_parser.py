@@ -2,6 +2,16 @@ import os
 import requests
 from bs4 import BeautifulSoup
 import csv
+from datetime import datetime
+
+
+# Function to convert date from "01OCT13" to "YYMM" format
+def convert_date(date_str):
+    date_obj = datetime.strptime(date_str, "%d%b%y")
+    # Add "20" as a prefix to the last two digits of the year
+    full_year = "20" + date_obj.strftime("%y")
+    return full_year + "-" + date_obj.strftime("%m")
+
 
 # Create a directory to store the downloaded pages
 if not os.path.exists('visa_bulletin_pages'):
@@ -49,13 +59,16 @@ for year in range(start_year, current_year + 1):
             date_selector = "body > div.tsg-rwd-body-frame-row > div.contentbody > div.tsg-rwd-main-copy-frame > div.tsg-rwd-main-copy-body-frame.withrail > div.tsg-rwd-content-page-parsysxxx.parsys > div:nth-child(5) > div > p > table > tbody > tr:nth-child(4) > td:nth-child(3)"
             date_element = soup.select_one(date_selector)
 
-            date = date_element.text.strip(
+            date_str = date_element.text.strip(
             ) if date_element else 'Date not found'
-            print(f"EB3 For China Mainland born PD date is {date}")
+
+            # Convert the date to "YYMM" format using the function
+            formatted_date = convert_date(date_str)
+            print(f"EB3 For China Mainland born PD date is {formatted_date}")
 
             # Interpolate the "Year-Month" column name
             year_month = f"{calendar_year}-{month_index + 1:02}"  # Format as "year-month"
-            data.append((year_month, date))
+            data.append((year_month, formatted_date))
         else:
             print(f"Failed to download: {month} {calendar_year}")
 
@@ -64,7 +77,7 @@ with open(csv_filename, 'w', newline='') as csv_file:
     csv_writer = csv.writer(csv_file)
 
     # Write the header row with the dynamically interpolated column name
-    csv_writer.writerow(["Year-Month", "Date"])
+    csv_writer.writerow(["Calendar Date", "PD Date"])
 
     # Write the data rows
     csv_writer.writerows(data)
