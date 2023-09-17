@@ -4,7 +4,7 @@ on:
   push:
   workflow_dispatch:
   schedule:
-  - cron: '0 13 * * *' # runs at 9am EST
+  - cron: '27 7 * * WED' # runs at every Wednesday 7:27am
 
 jobs:
   scheduled:
