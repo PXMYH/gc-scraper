@@ -13,6 +13,18 @@ def convert_date(date_str):
     return full_year + "-" + date_obj.strftime("%m")
 
 
+# Function to calculate the time difference in months between two dates
+def calculate_time_difference_months(calendar_date_str, pd_date_str):
+    calendar_date = datetime.strptime(calendar_date_str, "%Y-%m")
+    pd_date = datetime.strptime(pd_date_str, "%Y-%m")
+
+    # Calculate the difference in months
+    months_difference = (calendar_date.year - pd_date.year
+                         ) * 12 + calendar_date.month - pd_date.month
+
+    return months_difference
+
+
 # Create a directory to store the downloaded pages
 if not os.path.exists('visa_bulletin_pages'):
     os.makedirs('visa_bulletin_pages')
@@ -68,16 +80,24 @@ for year in range(start_year, current_year + 1):
 
             # Interpolate the "Year-Month" column name
             year_month = f"{calendar_year}-{month_index + 1:02}"  # Format as "year-month"
-            data.append((year_month, formatted_date))
+
+            # Calculate the time difference in months
+            time_difference = calculate_time_difference_months(
+                year_month, formatted_date)
+            print(f"Time Difference (months): {time_difference}")
+
+            # Append the data to the list
+            data.append((year_month, formatted_date, time_difference))
         else:
             print(f"Failed to download: {month} {calendar_year}")
 
-# Write the extracted dates to a CSV file
+# Write the extracted dates and time difference to a CSV file
 with open(csv_filename, 'w', newline='') as csv_file:
     csv_writer = csv.writer(csv_file)
 
-    # Write the header row with the dynamically interpolated column name
-    csv_writer.writerow(["Calendar Date", "PD Date"])
+    # Write the header row with column names
+    csv_writer.writerow(
+        ["Calendar Date", "PD Date", "Time Difference (months)"])
 
     # Write the data rows
     csv_writer.writerows(data)
