@@ -12,7 +12,7 @@ base_url = "https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bull
 
 # Define the years to loop through
 start_year = 2016
-current_year = 2016  # You can adjust this as needed
+current_year = 2023  # You can adjust this as needed
 
 # Define the months
 months = [
