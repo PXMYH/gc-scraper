@@ -1,0 +1,33 @@
+name: Extract GC I485 Data
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+  - cron: '0 13 * * *' # runs at 9am EST
+
+jobs:
+  scheduled:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Run i485 parser
+        run: python3 i485_parser.py
+
+      - name: Install project
+        run: poetry install --no-interaction
+
+      - name: Commit and push if it changed
+        run: |-
+          git config user.name "Automated"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          timestamp=$(date -u)
+          git commit -m "Latest data: ${timestamp}" || exit 0
+          git push
