@@ -24,7 +24,7 @@ jobs:
 
       - name: Extract Elements Using pup
         run: |-
-          pup '#block-flag-content > article > div > div > table:nth-child(10) > tbody > tr:nth-child(1) text{}' < perm.html | grep -v '^$' | grep -v '^[[:space:]]*$' > perm_time.txt
+          pup '#block-flag-content > article > div > div > table:nth-child(10) > tbody > tr:nth-child(1) > td.xl71 text{}' < perm.html | grep -v '^$' | grep -v '^[[:space:]]*$' > perm_time.txt
 
       - name: Commit and push if it changed
         run: |-
