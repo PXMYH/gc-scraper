@@ -35,7 +35,7 @@ jobs:
         run: uv sync
 
       - name: Run i485 parser
-        run: uv run python i485_parser.py
+        run: uv run python src/gc_scraper/i485_parser.py
 
       - name: Commit and push if it changed
         run: |-
