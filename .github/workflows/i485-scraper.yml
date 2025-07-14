@@ -21,40 +21,21 @@ jobs:
           python-version: '3.10'
 
       #----------------------------------------------
-      #  -----  install & configure poetry  -----
+      #  -----  install & configure uv  -----
       #----------------------------------------------
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
         with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          installer-parallel: true
+          enable-cache: true
 
       #----------------------------------------------
-      #       load cached venv if cache exists
-      #----------------------------------------------
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
-          
-      #----------------------------------------------
-      # install dependencies if cache does not exist
+      #       install dependencies with uv
       #----------------------------------------------
       - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
-        
-      #----------------------------------------------
-      # install your root project, if required
-      #----------------------------------------------
-      - name: Install project
-        run: poetry install --no-interaction
+        run: uv sync
 
       - name: Run i485 parser
-        run: poetry run python3 i485_parser.py
+        run: uv run python i485_parser.py
 
       - name: Commit and push if it changed
         run: |-
