@@ -38,7 +38,7 @@ jobs:
         run: uv run python src/gc_scraper/i485_parser.py
 
       - name: Update timestamp
-        run: date -u "+%B %d, %Y at %H:%M UTC" > last_updated.txt
+        run: date -u "+%B %d, %Y at %H:%M UTC" > data/last_updated.txt
 
       - name: Commit and push if it changed
         run: |-

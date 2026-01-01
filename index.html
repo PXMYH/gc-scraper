@@ -27,7 +27,7 @@
     <section>
         <h2>i485</h2>
         <!-- Embed the image within the HTML using the <img> tag -->
-        <img src="visa_bulletin_plot.png" alt="Visa Bulletin Plot" width="400">
+        <img src="data/visa_bulletin_plot.png" alt="Visa Bulletin Plot" width="400">
     </section>
 
     <!-- Add the "PERM" section before the displayed time -->
@@ -43,7 +43,7 @@
         // Function to fetch and display time from perm_time.txt
         async function displayTime() {
             try {
-                const response = await fetch('perm_time.txt');
+                const response = await fetch('data/perm_time.txt');
                 const text = await response.text();
                 const time = text.trim();
                 if (time) {
@@ -57,7 +57,7 @@
         // Function to fetch and display last updated timestamp
         async function displayTimestamp() {
             try {
-                const response = await fetch('last_updated.txt');
+                const response = await fetch('data/last_updated.txt');
                 const text = await response.text();
                 const timestamp = text.trim();
                 if (timestamp) {

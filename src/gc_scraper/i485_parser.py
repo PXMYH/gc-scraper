@@ -9,9 +9,9 @@ from bs4 import BeautifulSoup
 # Configuration constants
 BASE_URL = "https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin/"
 START_YEAR = 2016
-CSV_FILENAME = "visa_bulletin_dates.csv"
+CSV_FILENAME = "data/visa_bulletin_dates.csv"
 CACHE_DIR = "visa_bulletin_pages"
-PLOT_FILENAME = "visa_bulletin_plot.png"
+PLOT_FILENAME = "data/visa_bulletin_plot.png"
 MONTHS = [
     "january", "february", "march", "april", "may", "june",
     "july", "august", "september", "october", "november", "december"
