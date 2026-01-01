@@ -69,19 +69,23 @@ def calculate_time_difference_months(calendar_date_str, pd_date_str):
 def generate_plot(data, output_filename):
     """Generate a plot from the data and save it as an image."""
     calendar_dates = [item[0] for item in data]
-    time_differences = [item[2] for item in data]
+    time_differences_years = [item[2] / 12 for item in data]  # Convert to years
 
-    plt.figure(figsize=(10, 6))
-    plt.plot(calendar_dates, time_differences, marker='o', linestyle='-')
-    plt.title("Time Gap vs Calendar Date")
-    plt.xlabel("Calendar Date")
-    plt.ylabel("Time Gap (months)")
+    plt.figure(figsize=(12, 6))
+    plt.plot(calendar_dates, time_differences_years, color='#2563eb', linewidth=2)
 
-    # Display every 3rd label on x-axis
-    n = 3
-    plt.xticks(range(0, len(calendar_dates), n), calendar_dates[::n], rotation=45)
-    plt.grid(True)
-    plt.savefig(output_filename, bbox_inches='tight')
+    plt.title("EB3 China Mainland Priority Date Backlog", fontsize=14, fontweight='bold')
+    plt.xlabel("Date", fontsize=11)
+    plt.ylabel("Backlog (years)", fontsize=11)
+
+    # Show yearly labels only
+    yearly_indices = [i for i, d in enumerate(calendar_dates) if d.endswith('-01')]
+    yearly_labels = [calendar_dates[i][:4] for i in yearly_indices]
+    plt.xticks(yearly_indices, yearly_labels)
+
+    plt.grid(True, axis='y', alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(output_filename, dpi=150, bbox_inches='tight')
     plt.close()
 
 
