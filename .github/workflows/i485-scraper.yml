@@ -12,11 +12,11 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
-        
+        uses: actions/checkout@v4
+
       - name: Set up python
         id: setup-python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -36,6 +36,9 @@ jobs:
 
       - name: Run i485 parser
         run: uv run python src/gc_scraper/i485_parser.py
+
+      - name: Update timestamp
+        run: date -u "+%B %d, %Y at %H:%M UTC" > last_updated.txt
 
       - name: Commit and push if it changed
         run: |-

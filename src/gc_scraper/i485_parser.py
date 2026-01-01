@@ -1,15 +1,25 @@
 import os
-import requests
-from bs4 import BeautifulSoup
 import csv
 from datetime import datetime
+
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MaxNLocator
+import requests
+from bs4 import BeautifulSoup
+
+# Configuration constants
+BASE_URL = "https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin/"
+START_YEAR = 2016
+CSV_FILENAME = "visa_bulletin_dates.csv"
+CACHE_DIR = "visa_bulletin_pages"
+PLOT_FILENAME = "visa_bulletin_plot.png"
+MONTHS = [
+    "january", "february", "march", "april", "may", "june",
+    "july", "august", "september", "october", "november", "december"
+]
 
 
-# Function to load existing CSV data
 def load_existing_data(csv_filename):
-    """Load existing CSV data into a dictionary keyed by calendar date"""
+    """Load existing CSV data into a dictionary keyed by calendar date."""
     existing_data = {}
     if os.path.exists(csv_filename):
         with open(csv_filename, 'r') as f:
@@ -23,9 +33,8 @@ def load_existing_data(csv_filename):
     return existing_data
 
 
-# Function to check cache or download HTML
 def get_cached_or_download(url, filepath):
-    """Check if HTML file exists, otherwise download and save"""
+    """Check if HTML file exists, otherwise download and save."""
     if os.path.exists(filepath):
         print(f"Using cached file: {filepath}")
         with open(filepath, 'r', encoding='utf-8') as f:
@@ -40,146 +49,125 @@ def get_cached_or_download(url, filepath):
         return None
 
 
-# Function to convert date from "01OCT13" to "YYMM" format
 def convert_date(date_str):
-    date_obj = datetime.strptime(date_str, "%d%b%y")
-    # Add "20" as a prefix to the last two digits of the year
-    full_year = "20" + date_obj.strftime("%y")
-    return full_year + "-" + date_obj.strftime("%m")
+    """Convert date from '01OCT13' to 'YYYY-MM' format."""
+    try:
+        date_obj = datetime.strptime(date_str, "%d%b%y")
+        return f"20{date_obj.strftime('%y')}-{date_obj.strftime('%m')}"
+    except ValueError:
+        print(f"Warning: Could not parse date '{date_str}'")
+        return None
 
 
-# Function to calculate the time difference in months between two dates
 def calculate_time_difference_months(calendar_date_str, pd_date_str):
+    """Calculate the time difference in months between two dates."""
     calendar_date = datetime.strptime(calendar_date_str, "%Y-%m")
     pd_date = datetime.strptime(pd_date_str, "%Y-%m")
-
-    # Calculate the difference in months
-    months_difference = (calendar_date.year - pd_date.year
-                         ) * 12 + calendar_date.month - pd_date.month
-
-    return months_difference
+    return (calendar_date.year - pd_date.year) * 12 + calendar_date.month - pd_date.month
 
 
-# Generate a plot from the data and save it as an image
-def generate_plot(data):
-    # Extract calendar dates and time differences from the data
+def generate_plot(data, output_filename):
+    """Generate a plot from the data and save it as an image."""
     calendar_dates = [item[0] for item in data]
     time_differences = [item[2] for item in data]
 
-    # Create a Matplotlib figure
     plt.figure(figsize=(10, 6))
     plt.plot(calendar_dates, time_differences, marker='o', linestyle='-')
-
-    # Customize the plot
     plt.title("Time Gap vs Calendar Date")
     plt.xlabel("Calendar Date")
     plt.ylabel("Time Gap (months)")
 
-    # Format the x-axis labels to display every nth label (adjust n as needed)
-    n = 3  # Display every 3rd label
-    plt.xticks(range(0, len(calendar_dates), n),
-               calendar_dates[::n],
-               rotation=45)
-
+    # Display every 3rd label on x-axis
+    n = 3
+    plt.xticks(range(0, len(calendar_dates), n), calendar_dates[::n], rotation=45)
     plt.grid(True)
-
-    # Save the plot as an image
-    plt.savefig("visa_bulletin_plot.png", bbox_inches='tight')
-    plt.close()  # Close the figure to free up resources
+    plt.savefig(output_filename, bbox_inches='tight')
+    plt.close()
 
 
-# Create a directory to store the downloaded pages
-if not os.path.exists('visa_bulletin_pages'):
-    os.makedirs('visa_bulletin_pages')
+def main():
+    """Main entry point for the I-485 visa bulletin scraper."""
+    # Create cache directory
+    if not os.path.exists(CACHE_DIR):
+        os.makedirs(CACHE_DIR)
 
-# Define the base URL
-base_url = "https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin/"
+    current_year = datetime.now().year
 
-# Define the years to loop through
-start_year = 2016
-current_year = datetime.now().year
+    # Load existing parsed data to avoid re-processing
+    existing_data = load_existing_data(CSV_FILENAME)
+    print(f"Loaded {len(existing_data)} existing records from CSV")
 
-# Define the months
-months = [
-    "january", "february", "march", "april", "may", "june", "july", "august",
-    "september", "october", "november", "december"
-]
+    # Initialize list for newly parsed data
+    data = []
 
-# Create a CSV file to store the extracted dates
-csv_filename = "visa_bulletin_dates.csv"
+    # Loop through years and months
+    for year in range(START_YEAR, current_year + 1):
+        for month_index, month in enumerate(MONTHS):
+            # DOS fiscal year adjustment (Oct-Dec are next fiscal year)
+            dos_fiscal_year = year + 1 if month_index >= 9 else year
+            calendar_year = year
+            year_month = f"{calendar_year}-{month_index + 1:02}"
 
-# Load existing parsed data to avoid re-processing
-existing_data = load_existing_data(csv_filename)
-print(f"Loaded {len(existing_data)} existing records from CSV")
+            # Skip if already parsed
+            if year_month in existing_data:
+                print(f"Skipping {year_month} - already parsed")
+                continue
 
-# Initialize a list to store the newly parsed data
-data = []
+            # Build URL and filepath
+            url = f"{BASE_URL}{dos_fiscal_year}/visa-bulletin-for-{month}-{calendar_year}.html"
+            filepath = f"{CACHE_DIR}/{month}_{calendar_year}.html"
 
-# Loop through the years and months
-for year in range(start_year, current_year + 1):
-    for month_index, month in enumerate(months):
-        # Adjust the year if the month is November or later
-        dos_fiscal_year = year + 1 if month_index >= 9 else year
-        calendar_year = year
+            # Get HTML content
+            html_content = get_cached_or_download(url, filepath)
+            if not html_content:
+                print(f"Failed to download: {month} {calendar_year}")
+                continue
 
-        # Check if this date was already parsed
-        year_month = f"{calendar_year}-{month_index + 1:02}"
-        if year_month in existing_data:
-            print(f"Skipping {year_month} - already parsed")
-            continue
-
-        # Form the URL for the specific visa bulletin page
-        url = base_url + f"{dos_fiscal_year}/visa-bulletin-for-{month}-{calendar_year}.html"
-
-        # Check cache or download HTML
-        filepath = f"visa_bulletin_pages/{month}_{calendar_year}.html"
-        html_content = get_cached_or_download(url, filepath)
-
-        # Check if we got HTML content
-        if html_content:
-            # Parse the HTML content of the page
+            # Parse HTML
             soup = BeautifulSoup(html_content, "html.parser")
-
-            # Extract the date using the specified CSS selector
-            date_selector = "body > div.tsg-rwd-body-frame-row > div.contentbody > div.tsg-rwd-main-copy-frame > div.tsg-rwd-main-copy-body-frame.withrail > div.tsg-rwd-content-page-parsysxxx.parsys > div:nth-child(5) > div > p > table > tbody > tr:nth-child(4) > td:nth-child(3)"
+            date_selector = (
+                "body > div.tsg-rwd-body-frame-row > div.contentbody > "
+                "div.tsg-rwd-main-copy-frame > div.tsg-rwd-main-copy-body-frame.withrail > "
+                "div.tsg-rwd-content-page-parsysxxx.parsys > div:nth-child(5) > "
+                "div > p > table > tbody > tr:nth-child(4) > td:nth-child(3)"
+            )
             date_element = soup.select_one(date_selector)
 
-            date_str = date_element.text.strip(
-            ) if date_element else 'Date not found'
+            if not date_element:
+                print(f"Warning: Could not find date element for {year_month}")
+                continue
 
-            # Convert the date to "YYMM" format using the function
+            date_str = date_element.text.strip()
             formatted_date = convert_date(date_str)
-            print(f"EB3 For China Mainland born PD date is {formatted_date}")
 
-            # Calculate the time difference in months
-            time_difference = calculate_time_difference_months(
-                year_month, formatted_date)
+            if not formatted_date:
+                print(f"Warning: Skipping {year_month} due to date parsing error")
+                continue
+
+            print(f"EB3 China Mainland PD date: {formatted_date}")
+
+            time_difference = calculate_time_difference_months(year_month, formatted_date)
             print(f"Time Difference (months): {time_difference}")
 
-            # Append the data to the list
             data.append((year_month, formatted_date, time_difference))
-        else:
-            print(f"Failed to download: {month} {calendar_year}")
 
-# Merge existing data with newly parsed data
-print(f"Newly parsed records: {len(data)}")
-all_data = list(existing_data.values()) + data
-all_data.sort(key=lambda x: x[0])  # Sort by calendar date
-print(f"Total records: {len(all_data)}")
+    # Merge existing data with newly parsed data
+    print(f"Newly parsed records: {len(data)}")
+    all_data = list(existing_data.values()) + data
+    all_data.sort(key=lambda x: x[0])
+    print(f"Total records: {len(all_data)}")
 
-# Write the merged data to CSV file
-with open(csv_filename, 'w', newline='') as csv_file:
-    csv_writer = csv.writer(csv_file)
+    # Write merged data to CSV
+    with open(CSV_FILENAME, 'w', newline='') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow(["Calendar Date", "PD Date", "Time Difference (months)"])
+        csv_writer.writerows(all_data)
+    print(f"Data written to {CSV_FILENAME}")
 
-    # Write the header row with column names
-    csv_writer.writerow(
-        ["Calendar Date", "PD Date", "Time Difference (months)"])
+    # Generate plot
+    generate_plot(all_data, PLOT_FILENAME)
+    print(f"Plot generated and saved as {PLOT_FILENAME}")
 
-    # Write the data rows
-    csv_writer.writerows(all_data)
 
-print(f"Data written to {csv_filename}")
-
-# Generate the plot and save it as an image
-generate_plot(all_data)
-print("Plot generated and saved as visa_bulletin_plot.png")
+if __name__ == "__main__":
+    main()

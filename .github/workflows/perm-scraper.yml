@@ -4,20 +4,22 @@ on:
   push:
   workflow_dispatch:
   schedule:
-  - cron: '0 13 * * *' # runs at 9am EST
+  - cron: '0 13 * * WED' # runs weekly on Wednesday at 9am EST (matches I-485 schedule)
 
 jobs:
   scheduled:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install curl and pup
+      - name: Install pup
         run: |
-          brew install curl
-          brew install pup
+          wget -q https://github.com/ericchiang/pup/releases/download/v0.4.0/pup_v0.4.0_linux_amd64.zip
+          unzip pup_v0.4.0_linux_amd64.zip
+          chmod +x pup
+          sudo mv pup /usr/local/bin/
 
       - name: Fetch HTML Content
         run: curl -o perm.html https://flag.dol.gov/processingtimes
@@ -25,6 +27,9 @@ jobs:
       - name: Extract Elements Using pup
         run: |-
           pup 'td.xl71 text{}' < perm.html | grep -v '^$' | grep -v '^[[:space:]]*$' | head -1 > perm_time.txt
+
+      - name: Update timestamp
+        run: date -u "+%B %d, %Y at %H:%M UTC" > last_updated.txt
 
       - name: Commit and push if it changed
         run: |-
